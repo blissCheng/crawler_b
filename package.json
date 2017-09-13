@@ -1,0 +1,22 @@
+{
+  "name": "crawler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blissCheng/crawler_b.git"
+  },
+  "author": "chengxs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/blissCheng/crawler_b/issues"
+  },
+  "homepage": "https://github.com/blissCheng/crawler_b#readme",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.1"
+  }
+}
