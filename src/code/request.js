@@ -47,7 +47,6 @@ let getInfo = (tid,pageno,index) => {
 function getStr(obj, str, i) {
     let j = i.toString()
     if(obj[j]){
-
         if(obj[j].stat.view > 500000){
             str += `类型：${ obj[j].tname },标题：${ obj[j].title }, 播放量：${ obj[j].stat.view}, 房间号：${obj[j].aid} \n`
             console.log(`${ obj[j].title } 准备写入`)
