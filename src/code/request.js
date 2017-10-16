@@ -3,6 +3,9 @@
 import http from 'http'
 import fs from 'fs'
 import { config } from '../config'
+import connection from './connect'
+
+connection.connect()
 
 let getInfo = (tid,pageno,index) => {
 
@@ -44,32 +47,50 @@ let getInfo = (tid,pageno,index) => {
     })
 }
 
-function getStr(obj, str, i) {
+function getStr(obj, addSqlParams, i) {
     let j = i.toString()
-    if(obj[j]){
-        if(obj[j].stat.view > 500000){
-            str += `类型：${ obj[j].tname },标题：${ obj[j].title }, 播放量：${ obj[j].stat.view}, 房间号：${obj[j].aid} \n`
-            console.log(`${ obj[j].title } 准备写入`)
-        }
+    let addSql = 'INSERT INTO guchu(aid,videos,tid,tname,copyright,pic,title,attribute,tags,duration,rights,stat,play,favorites,video_review,create_a,description,mid,author,face) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+    if(obj[j]) {
+        obj[j].tags = JSON.stringify(obj[j].tags)
+        obj[j].rights = JSON.stringify(obj[j].rights)
+        obj[j].stat = JSON.stringify(obj[j].stat)
+        addSqlParams = Object.values(obj[j])
+
+        // connection.query(addSql, addSqlParams, function (err, result) {
+        //     if (err) {
+        //         console.log('[INSERT ERROR] - ', err.message);
+        //         return;
+        //     }
+        //     console.log('写入成功')
+        // })
         i++
-        getStr(obj, str, i)
+        getStr(obj, addSqlParams, i)
+
     }else {
-        new Promise((resolve, reject) => {
+        connection.query(addSql,addSqlParams,function(err, result){
 
-            let outputFile = fs.createWriteStream('./text/output.txt')
-
-            resolve(outputFile.write(str,'UTF8'))
-        }).then(() =>{
-            let readerStream = fs.createReadStream('./text/output.txt'),
-                writerStream = fs.createWriteStream('./text/guide.txt',{flags: 'a'})
-
-            readerStream.pipe(writerStream);
-            console.log('数据写入完成')
-
-
-        }).catch((error) => {
-            throw new Error(error)
+            if(err){
+                console.log('[INSERT ERROR] - ',err.message);
+                return;
+            }
+            console.log('写入成功')
         })
+        // new Promise((resolve, reject) => {
+        //
+        //     let outputFile = fs.createWriteStream('./text/output.txt')
+        //
+        //     resolve(outputFile.write(str,'UTF8'))
+        // }).then(() =>{
+        //     let readerStream = fs.createReadStream('./text/output.txt'),
+        //         writerStream = fs.createWriteStream('./text/guide.txt',{flags: 'a'})
+        //
+        //     readerStream.pipe(writerStream);
+        //     console.log('数据写入完成')
+        //
+        //
+        // }).catch((error) => {
+        //     throw new Error(error)
+        // })
 
        // pipeHandle('../text/guide.txt')
     }
